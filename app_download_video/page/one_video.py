@@ -109,7 +109,7 @@ class OneVideo(ft.Column):
                     padding=5,
                     alignment= ft.alignment.center,
                     content= ft.Text(
-                        value= "Tip: Ctrl + A lalu Ctrl + C dan pergi ke FDM ->Menu -> Paste urls from clipboard. Download dari aplikasi ini belum tersedia, tapi dikemudian hari mungkin akan tersedia.",
+                        value= "Tip: Ctrl + A lalu Ctrl + C dan pergi ke FDM ->Menu -> Paste urls from clipboard atau dengan download manager lainnya seperti IDM. Download dari aplikasi ini belum tersedia, tapi dikemudian hari mungkin akan tersedia.",
                         size= 12,
                         text_align= ft.TextAlign.CENTER
                     )
@@ -140,12 +140,14 @@ class OneVideo(ft.Column):
     def func_selection_download(self, e):
         key_option = self.select_download_format.value
         
-        nanda = next((res["url"] for res in self.result_download["formats"] if res["format_id"] == key_option),None)
+        nanda = next(( res["url"] + "&title="  for res in self.result_download["formats"] if res["format_id"] == key_option),None)
         
-        self.url_download = nanda
+        url_hasil = nanda + self.result_download["title"]
+        
+        self.url_download = url_hasil
         
         # memasukan url kedalam input saat file dipilih
-        self.textinput_url_hasil.value = nanda
+        self.textinput_url_hasil.value = url_hasil
         # self.ref_coloumn_download.current.visible = True
         self.update()
         
@@ -161,9 +163,6 @@ class OneVideo(ft.Column):
             self.ref_column_menu_selection.current.visible = True
             self.label_judul_video_search.value = self.result_download["title"]
             
-            
-        
-        
         self.prosses_waiting_search(is_prosses=False)     
         self.update()
     

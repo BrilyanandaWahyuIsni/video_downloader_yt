@@ -1,8 +1,5 @@
 import flet as ft
 from page import OneVideo,PlaylistVideo,ChannelListVideo
-import sys
-print(sys.getfilesystemencoding())
-
 
 
 class MyNavbar:
