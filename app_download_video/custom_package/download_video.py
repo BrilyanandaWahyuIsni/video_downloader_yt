@@ -46,7 +46,7 @@ class DownloadManyVideo:
         
     async def fetch_all_info(self,urls_video):
         loop = asyncio.get_running_loop()
-        with ProcessPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=20) as executor:
             tasks = [
                 loop.run_in_executor(executor, functools.partial(self.get_video_detail, url))
                 for url in urls_video
