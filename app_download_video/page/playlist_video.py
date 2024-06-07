@@ -137,7 +137,7 @@ class PlaylistVideo(ft.Column):
             video_detail = DownloadManyVideo(list_url)
             get_video_info = video_detail.get_many_info
             
-            data = [self.search_video_url(data) for data in get_video_info]
+            data = [self.search_video_url(index=index,data_video_detail=data) for index, data in enumerate(get_video_info)]
             self.video_details_info = data
                
                 
@@ -160,7 +160,7 @@ class PlaylistVideo(ft.Column):
             self.update()
 
     
-    def search_video_url(self, data_video_detail):
+    def search_video_url(self, index, data_video_detail):
         hasil = {
             "id": data_video_detail["id"],
             "title": data_video_detail["title"],
@@ -170,13 +170,14 @@ class PlaylistVideo(ft.Column):
             "selected": "none"
         }
         
+        
         for format in data_video_detail["formats"]:
             try:
                 if format["vcodec"] != "none" and format["acodec"] != "none":
                    if format["format_note"] == "360p":
-                      hasil["360p"] = format["url"] 
+                      hasil["360p"] = f'{format["url"]}&title={index+1}. {data_video_detail["title"]}'
                    if format["format_note"] == "720p":
-                      hasil["720p"] = format["url"] 
+                      hasil["720p"] = f'{format["url"]}&title={index+1}. {data_video_detail["title"]}'
             except:
                 pass
         

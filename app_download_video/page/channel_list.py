@@ -187,7 +187,6 @@ class ChannelListVideo(ft.Column):
             
             a = self.value_start_end_list["start"] - 1
             b = self.value_start_end_list["end"]
-            print(a,b)
             
             list_filter = list_url
             
@@ -197,26 +196,21 @@ class ChannelListVideo(ft.Column):
             if a == None or a <= 0:
                 a = 0
             
-            print(a,b)
-            
             if b != None:
                 list_filter = list_url[a:b]
             else:
                 list_filter = list_url[a:]
             
-            print(list_filter)
-            
             video_detail = DownloadManyVideo(list_filter)
             get_video_info = video_detail.get_many_info
             
             
-            data = [self.search_video_url(data) for data in get_video_info]
+            data = [self.search_video_url(data_video_detail=data,index=index) for index,data in enumerate(get_video_info)]
             self.video_details_info = data
                 
-            for hasil in self.video_details_info:
-                
+            for hasil in self.video_details_info:                
                 if hasil != None and  hasil[self.format_video.current.value] != "none":
-                    self.text_url_hasil += f"{hasil[self.format_video.current.value]}\n"
+                    self.text_url_hasil += f'{hasil[self.format_video.current.value]}\n'
             
             self.label_is_success.current.value = "Udah selesai bos! dibawah hasil urlnya."
             self.label_is_success.current.color = ft.colors.GREEN_600
@@ -235,7 +229,7 @@ class ChannelListVideo(ft.Column):
     
     
     
-    def search_video_url(self, data_video_detail):
+    def search_video_url(self, index, data_video_detail):
         if data_video_detail == None:
             return None
         hasil = {
@@ -251,15 +245,15 @@ class ChannelListVideo(ft.Column):
             try:
                 if format["vcodec"] != "none" and format["acodec"] != "none":
                    if format["format_note"] == "360p":
-                      hasil["360p"] = format["url"] 
+                      hasil["360p"] = f'{format["url"]}&title={index+1}. {data_video_detail["title"]}'
                    if format["format_note"] == "720p":
-                      hasil["720p"] = format["url"] 
+                      hasil["720p"] = f'{format["url"]}&title={index+1}. {data_video_detail["title"]}'
             except:
                 pass
         
         try:
             nanda = [audio for audio in data_video_detail["formats"] if audio["resolution"] == "audio only"]
-            hasil["audio_best"] = max(nanda, key=lambda x: x["filesize_approx"])["url"]
+            hasil["audio_best"] = max(nanda, key=lambda x: x["filesize_approx"])["url"]  + "&title=" +data_video_detail["title"]
         except:
             pass
 
@@ -267,7 +261,6 @@ class ChannelListVideo(ft.Column):
             hasil["selected"] = "720p"
         elif hasil["360p"] != "none":
             hasil["selected"] = "360p"
-        
         return hasil
         
      
@@ -286,7 +279,7 @@ class ChannelListVideo(ft.Column):
                 self.value_start_end_list["end"] = None
             
         
-        
+    # change after click resolution   
     def on_change_format(self, e):
         self.text_url_hasil = ""
         for hasil in self.video_details_info:
